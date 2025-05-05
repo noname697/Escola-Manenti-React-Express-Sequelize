@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import alunos from "../ResultadoPesquisa/dados.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAlunos } from "../../servicos/alunos";
 
 const SessaoPesquisa = styled.section`
   margin-top: 80px;
@@ -61,6 +61,16 @@ const ItemLista = styled.li`
 
 function Pesquisa() {
   const [textoDigitado, setTextoDigitado] = useState([]);
+  const [listaAlunos, setListaAlunos] = useState([]);
+
+  useEffect(() => {
+    pegaAlunos();
+  }, []);
+
+  async function pegaAlunos() {
+    const alunosAPI = await getAlunos();
+    setListaAlunos(alunosAPI);
+  }
 
   async function pegaValor(e) {
     setTextoDigitado(e.target.value.toLowerCase());
@@ -82,7 +92,7 @@ function Pesquisa() {
       />
       <ResultadoPesquisa>
         <ListaDeAlunos>
-          {alunos
+          {listaAlunos
             .filter((aluno) => aluno.nome.toLowerCase().includes(textoDigitado))
             .map((aluno, i) => (
               <ItemLista key={i}>
